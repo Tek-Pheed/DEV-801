@@ -1,0 +1,13 @@
+name: DEV-801 - Mirror
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build:
+        name: build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
