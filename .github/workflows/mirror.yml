@@ -1,13 +1,20 @@
 name: DEV-801 - Mirror
 
 on:
-    push:
-        branches:
-            - master
+  push:
+    branches:
+      - master
 
 jobs:
-    build:
-        name: build
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v5
+  push_to_mirror:
+    name: Push to mirror
+    runs-on: ubuntu-latest
+    steps:
+      - name: git-sync
+        uses: wei/git-sync@v3
+        with:
+          source_repo: ${{ secrets.SOURCE_REPO }}
+          source_branch: "master"
+          destination_repo: ${{ secrets.TARGET_REPO }}
+          destination_branch: "main"
+          ssh_private_key: ${{ secrets.SSH_KEY }}
