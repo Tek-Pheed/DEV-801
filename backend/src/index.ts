@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from "express";
 import Logger from "./utils/logger";
 import { connect } from "mongoose";
 import cors from "cors";
+import { authController } from "./controllers/auth.controllers";
 
 import stripeController from "./controllers/stripe.controller";
 import pingController from "./controllers/ping.controller";
@@ -18,7 +19,7 @@ app.use(cors());
 // MONGO CONFIG
 const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/DEV-801";
 
-// ROUTES CONFIG
+// API START POINT
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     const ip =
@@ -32,9 +33,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use("/api/stripe", stripeController);
+app.use("/api/auth",authController);
 app.use("/api/", pingController);
 
-// API START POINT
 connect(mongoURI)
     .then(() => {
         app.listen(port, () => {
