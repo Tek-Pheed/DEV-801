@@ -7,7 +7,6 @@ import dayjs from "dayjs";
  * @method error - replacement of .error
  * @method warn - replacement of .warn
  * @method debug - replacement of .debug
-
  */
 const Logger = logger({
     transport: {

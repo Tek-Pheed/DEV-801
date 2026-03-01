@@ -1,9 +1,18 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-export async function generateToken(email: string, id: string): Promise<string> {
+/**
+ * Create token using JWT for authentification
+ * @param email email of the user
+ * @param id unique identifier of the user
+ * @returns Token in string
+ */
+export async function generateToken(
+    email: string,
+    id: string,
+): Promise<string> {
     const secret = process.env.SECRET;
     if (!secret) {
-        throw new Error('Error when creating token');
+        throw new Error("Error when creating token");
     }
-    return jwt.sign({ email: email, id: id}, secret);
+    return jwt.sign({ email: email, id: id }, secret);
 }
