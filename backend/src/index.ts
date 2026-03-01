@@ -3,10 +3,15 @@ import express, { NextFunction, Request, Response } from "express";
 import Logger from "./utils/logger";
 import { connect } from "mongoose";
 import cors from "cors";
-import { authController } from "./controllers/auth.controllers";
+import swaggerUI from "swagger-ui-express";
+import { swagger } from "./utils/swagger";
 
+// CONTROLLERS
 import stripeController from "./controllers/stripe.controller";
 import pingController from "./controllers/ping.controller";
+import { authController } from "./controllers/auth.controller";
+import orderController from "./controllers/order.controller";
+import { openFoodFactsMigrationLocal } from "./utils/openFoodFacts";
 
 // EXPRESS CONFIG
 const app = express();
@@ -21,25 +26,25 @@ const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/DEV-801";
 
 // API START POINT
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-    const ip =
-        req.headers["x-forwarded-for"]?.toString().split(",")[0].trim() ||
-        req.socket.remoteAddress ||
-        req.ip;
-
-    Logger.info({ method: req.method, url: req.url, body: req.body, ip });
-
-    next();
-});
-
 app.use("/api/stripe", stripeController);
-app.use("/api/auth",authController);
+app.use("/api/orders", orderController);
+app.use("/api/auth", authController);
 app.use("/api/", pingController);
+app.use("/docs", swaggerUI.serve, swaggerUI.setup(swagger));
 
+// API START POINT
 connect(mongoURI)
     .then(() => {
         app.listen(port, () => {
             Logger.info(`API listen on port ${port}`);
+
+            openFoodFactsMigrationLocal()
+                .then(() => {
+                    Logger.info("Product loaded succesfully in MongoDB");
+                })
+                .catch((err) => {
+                    Logger.error(err);
+                });
         });
     })
     .catch(() => {

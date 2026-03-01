@@ -1,24 +1,47 @@
 import Stripe from "stripe";
-import { IProducts } from "../models/products.model";
+import { IProducts } from "../schemas/products.schema";
 import { convertIntoStripeProduct } from "../utils/converter";
 import Logger from "../utils/logger";
+import { orderStatus } from "../schemas/order.schema";
+import { JwtUserPayload } from "../middlewares/auth.middleware";
+import OrderService from "./order.service";
 
 const stripe = new Stripe(`${process.env.STRIPE_PRIVATE_KEY}`);
 
 export class StripeService {
+    private orderService = new OrderService();
+
     /**
      * Create payment link using stripe API
-     * @param {IProducts[]} products
+     * @param {IProducts[]} products list of products
+     * @param {JwtUserPayload} user Authenticated user
+     * @param {string} token Token of an authenticated user
      * @returns PaymentLinks | null
      */
-    async createPaymentLink(products: IProducts[]) {
+    async createPaymentLink(
+        products: IProducts[],
+        user: JwtUserPayload,
+        token: string,
+    ) {
         try {
             const items: any[] = await convertIntoStripeProduct(products);
+
+            const orderID = await this.orderService.createOrder(
+                products,
+                user.id,
+                "Stripe",
+            );
 
             return await stripe.paymentLinks.create({
                 line_items: items,
                 invoice_creation: {
                     enabled: true,
+                },
+                after_completion: {
+                    type: "redirect",
+                    redirect: {
+                        url: `${process.env.HOST}/stripe/payment_callback/?token=${token}&orderID=${orderID}&status=${orderStatus.validated}`,
+                    },
                 },
             });
         } catch (err) {
