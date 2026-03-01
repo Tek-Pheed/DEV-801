@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Logger from "../utils/logger";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import userModel from "../schemas/users.schema";
 
 const SECRET = process.env.SECRET as string | undefined;
 
@@ -17,6 +18,22 @@ export interface JwtUserPayload extends JwtPayload {
  */
 export interface AuthenticatedRequest extends Request {
     user?: JwtUserPayload;
+}
+
+/**
+ * Verify if the email and the id correspond to the same user in db
+ * @param email user_email from the decrypted token
+ * @param id user_id from gthe decrypted token
+ * @returns true or false
+ */
+
+async function verifyUser(email: string, id: string) {
+    const user = await userModel.find({email: email, _id: id})
+    if (user.length < 1) {
+        return false
+    } else {
+        return true
+    }
 }
 
 /**
@@ -47,7 +64,11 @@ const auth = async (
         }
 
         const decoded = jwt.verify(token, SECRET) as JwtUserPayload;
-        //TODO : verify if the email is correct
+        if (!(await verifyUser(decoded.email, decoded.id))) {
+            return res.status(401).json({
+            msg: "Invalid user",
+        });
+        }
         req.user = decoded;
         return next();
     } catch (err) {
