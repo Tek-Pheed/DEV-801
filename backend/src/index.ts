@@ -11,6 +11,8 @@ import stripeController from "./controllers/stripe.controller";
 import pingController from "./controllers/ping.controller";
 import { authController } from "./controllers/auth.controller";
 import orderController from "./controllers/order.controller";
+import productController from "./controllers/products.controller";
+import paypalController from "./controllers/paypal.controller";
 import { openFoodFactsMigrationLocal } from "./utils/openFoodFacts";
 
 // EXPRESS CONFIG
@@ -29,6 +31,8 @@ const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/DEV-801";
 app.use("/api/stripe", stripeController);
 app.use("/api/orders", orderController);
 app.use("/api/auth", authController);
+app.use("/api/paypal", paypalController);
+app.use("/api/products", productController);
 app.use("/api/", pingController);
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(swagger));
 
