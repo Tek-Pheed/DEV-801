@@ -8,21 +8,65 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject var viewModel: LoginViewModel = .init()
+    @ObservedObject var viewModel: LoginViewModel
     
     var body: some View {
-        VStack() {
-            TextField("Email", text: $viewModel.email)
-            SecureField("Password", text: $viewModel.password)
-            
-            Button {
-                Task {
-                    await viewModel.login()
+        NavigationStack() {
+            VStack() {
+                
+                VStack(alignment: .leading) {
+                    Text("Email")
+                        .foregroundColor(.secondary)
+                    
+                    HStack() {
+                        Image(systemName: "envelope")
+                        
+                        TextField("Email", text: $viewModel.email)
+                    }
+                    .padding()
+                    .glassEffect()
                 }
-            } label: {
-                Text("Se connecter")
-            }
+                
+                VStack(alignment: .leading) {
+                    Text("Password")
+                        .foregroundColor(.secondary)
+                    
+                    HStack() {
+                        Image(systemName: "key")
+                            .rotationEffect(.degrees(45))
+                        
+                        SecureField("Password", text: $viewModel.password)
+                    }
+                    .padding()
+                    .glassEffect()
+                }
+                .padding(.vertical)
+                
+                Button {
+                    Task {
+                        await viewModel.login()
+                    }
+                } label: {
+                    Text("Sign in")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.glassProminent)
 
+                Spacer()
+                
+                HStack() {
+                    Text("Don't have an account ?")
+                    NavigationLink("Sign up", destination: RegisterView())
+                }
+                
+
+            }
+            .padding()
+            .navigationTitle("Sign in")
         }
     }
+}
+
+#Preview {
+    LoginView(viewModel: LoginViewModel())
 }
