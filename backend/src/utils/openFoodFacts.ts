@@ -21,6 +21,7 @@ export const getProducts = async () => {
 
             data.products.map((product: any) => {
                 const { _id, ...rest } = product;
+                rest.price = parseFloat((Math.random() * 5).toFixed(2));
                 products.push(rest);
             });
         }

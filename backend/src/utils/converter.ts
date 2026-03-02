@@ -17,7 +17,7 @@ export async function convertIntoStripeProduct(products: IProducts[]) {
                     name: product.name,
                     images: [product.imageURL],
                 },
-                unit_amount: product.price,
+                unit_amount: Math.round(product.price * 100),
             },
         }),
     ]);
@@ -40,7 +40,6 @@ export async function convertIntoPaypalProduct(products: IProducts[]) {
                 value: `${product.price}`,
             },
             quantity: `${product.quantity}`,
-            image_url: `${product.imageURL}`,
         }),
     ]);
     return items;
