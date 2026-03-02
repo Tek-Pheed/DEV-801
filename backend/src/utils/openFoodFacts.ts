@@ -50,22 +50,13 @@ export const insertProducts = async () => {
  */
 export const openFoodFactsMigrationLocal = async () => {
     try {
-        const collections = await mongoose.connection.db
-            ?.listCollections({ name: "products" })
-            .toArray();
+        const data = await productModel.find({});
 
-        if (!collections) {
-            Logger.info("Collection manquante insertion des données");
+        if (data.length > 0) {
+            Logger.info("Products already loaded no action needed");
             return;
         }
-
-        if (collections.length > 0) {
-            Logger.info(`Collection products existe déjà !`);
-            return;
-        }
-
         await insertProducts();
-
         Logger.info("Insertion des données dans la collection product");
     } catch (err) {
         Logger.error(err);

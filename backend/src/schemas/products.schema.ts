@@ -22,14 +22,14 @@ export const productSchema = new Schema<IProducts>({
 
 // OPENFOODFACT SCHEMA
 const productsSchema = new mongoose.Schema({
-    brands: { type: String, required: true },
-    categories: { type: String, required: true },
-    code: { type: String, required: true, unique: true },
-    image_front_url: { type: String, required: true },
-    ingredients_text_fr: { type: String, required: true },
-    nutriscore_grade: { type: String, required: true },
-    product_name: { type: String, required: true },
-    quantity: { type: String, required: true },
+    brands: { type: String, required: false },
+    categories: { type: String, required: false },
+    code: { type: String, required: true, unique: false },
+    image_front_url: { type: String, required: false },
+    ingredients_text_fr: { type: String, required: false },
+    nutriscore_grade: { type: String, required: false },
+    product_name: { type: String, required: false },
+    quantity: { type: String, required: false },
     price: { type: Number, required: false },
     allergens_tags: { type: [String], required: false },
 });
