@@ -36,4 +36,21 @@ export class AuthService {
             return null;
         }
     }
+
+    async getProfile(email: string): Promise<any | null> {
+        try {
+            const user = await userModel.find({ email: email });
+            if ( user.length > 0) {
+                return {
+                    "email": user[0].email,
+                    "firstName": user[0].firstName,
+                    "lastName": user[0].lastName,
+                    "creationDate": user[0].creationDate,
+                }
+            }
+            return null;
+        } catch (error) {
+            return null;
+        }
+    }
 }
