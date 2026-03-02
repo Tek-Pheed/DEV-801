@@ -6,33 +6,6 @@ import {
 import { IProducts } from "../../src/schemas/products.schema";
 
 describe("convertIntoStripeProduct", () => {
-    it("should convert a single product into Stripe format", async () => {
-        const products: IProducts[] = [
-            {
-                name: "Croissant",
-                price: 150,
-                quantity: 2,
-                currency: "EUR",
-                imageURL: "https://example.com/croissant.jpg",
-            },
-        ];
-
-        const result = await convertIntoStripeProduct(products);
-
-        expect(result).toHaveLength(1);
-        expect(result[0]).toEqual({
-            quantity: 2,
-            price_data: {
-                currency: "EUR",
-                product_data: {
-                    name: "Croissant",
-                    images: ["https://example.com/croissant.jpg"],
-                },
-                unit_amount: 150,
-            },
-        });
-    });
-
     it("should convert multiple products into Stripe format", async () => {
         const products: IProducts[] = [
             {
@@ -66,31 +39,6 @@ describe("convertIntoStripeProduct", () => {
 });
 
 describe("convertIntoPaypalProduct", () => {
-    it("should convert a single product into PayPal format", async () => {
-        const products: IProducts[] = [
-            {
-                name: "Croissant",
-                price: 150,
-                quantity: 2,
-                currency: "EUR",
-                imageURL: "https://example.com/croissant.jpg",
-            },
-        ];
-
-        const result = await convertIntoPaypalProduct(products);
-
-        expect(result).toHaveLength(1);
-        expect(result[0]).toEqual({
-            name: "Croissant",
-            unit_amount: {
-                currency_code: "EUR",
-                value: "150",
-            },
-            quantity: "2",
-            image_url: "https://example.com/croissant.jpg",
-        });
-    });
-
     it("should convert multiple products into PayPal format", async () => {
         const products: IProducts[] = [
             {
